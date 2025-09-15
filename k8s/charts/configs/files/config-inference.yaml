@@ -1,0 +1,14 @@
+kafka:
+  brokers:
+    - scenarios-kafka-kafka-bootstrap:9092
+  version: 4.0.0
+  assignor: roundrobin
+  oldest: false
+  verbose: true
+  topic: videos
+  sasl_enable: true
+  tls_insecure_skip_verify: true
+postgresql:
+  max_attempts: 5
+server:
+  port: 8080

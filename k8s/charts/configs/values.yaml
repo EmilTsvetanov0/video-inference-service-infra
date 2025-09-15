@@ -1,0 +1,13 @@
+configs:
+  - name: inference
+    file: files/config-inference.yaml
+  - name: orchestrator
+    file: files/config-orchestrator.yaml
+  - name: to-orchestrator
+    file: files/config-outbox.yaml
+  - name: to-inference
+    file: files/config-outbox.yaml
+  - name: runner
+    file: files/config-runner.yaml
+  - name: userapi
+    file: files/config-userapi.yaml

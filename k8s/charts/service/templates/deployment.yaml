@@ -1,0 +1,67 @@
+{{- range .Values.services }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+spec:
+  replicas: {{ .replicas }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+    spec:
+      {{- if or .needsKafka .needsPostgres }}
+      serviceAccountName: {{ .name }}-serviceaccount
+      {{- end }}
+      containers:
+        - name: {{ .name }}
+          image: {{ .image }}
+          env:
+          {{- if .needsKafka }}
+          - name: KAFKA_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: kafka-secret
+                key: username
+          - name: KAFKA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: kafka-secret
+                key: password
+          {{- end }}
+          {{- if .needsPostgres }}
+          - name: DATABASE_PORT
+            value: "5432"
+          - name: DATABASE_HOST
+            value: {{ .needsPostgres }}
+          - name: DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-{{ .needsPostgres }}-secret
+                key: username
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-{{ .needsPostgres }}-secret
+                key: password
+          - name: DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: postgres-{{ .needsPostgres }}-secret
+                key: database
+          - name: PORT
+            value: "8080"
+          {{- end }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: {{ .configPath }}
+              subPath: config.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .name }}-config
+---
+{{- end }}

@@ -1,0 +1,55 @@
+kafka:
+  username: kafka-user
+  password: kafka-password
+
+postgresql:
+  - name: inference-db-postgresql
+    username: postgres
+    password: password
+    database: scenarios
+  - name: orchestrator-db-postgresql
+    username: postgres
+    password: password
+    database: scenarios
+  - name: userapi-db-postgresql
+    username: postgres
+    password: password
+    database: scenarios
+
+services:
+  - name: userapi
+    image: sh0vel/vis-userapi:1.0.3
+    replicas: 1
+    needsKafka: true
+    needsPostgres: userapi-db-postgresql
+    configPath: /go/awesomeProject/config/config.yaml
+  - name: orchestrator
+    image: sh0vel/vis-orchestrator:1.0.3-fix
+    replicas: 1
+    needsKafka: true
+    needsPostgres: orchestrator-db-postgresql
+    configPath: /go/awesomeProject/config/config.yaml
+  - name: runner
+    image: sh0vel/vis-runner:1.0.3
+    replicas: 1
+    needsKafka: true
+    needsPostgres: false
+    configPath: /go/awesomeProject/config/config.yaml
+  - name: to-orchestrator
+    image: sh0vel/vis-toutbox:1.0.3
+    replicas: 1
+    needsKafka: true
+    needsPostgres: orchestrator-db-postgresql
+    configPath: /go/awesomeProject/config/config.yaml
+  - name: to-inference
+    image: sh0vel/vis-toutbox:1.0.3
+    replicas: 1
+    needsKafka: true
+    needsPostgres: inference-db-postgresql
+    configPath: /go/awesomeProject/config/config.yaml
+  - name: inference
+    image: sh0vel/vis-inference:1.0.3-stable
+    replicas: 1
+    needsKafka: true
+    needsPostgres: inference-db-postgresql
+    configPath: /app/config/config.yaml

@@ -1,0 +1,43 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: videos
+  namespace: default
+  labels:
+    strimzi.io/cluster: scenarios-kafka
+spec:
+  partitions: 3
+  replicas: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: runners
+  namespace: default
+  labels:
+    strimzi.io/cluster: scenarios-kafka
+spec:
+  partitions: 3
+  replicas: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: scenario
+  namespace: default
+  labels:
+    strimzi.io/cluster: scenarios-kafka
+spec:
+  partitions: 1
+  replicas: 1
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: outbox
+  namespace: default
+  labels:
+    strimzi.io/cluster: scenarios-kafka
+spec:
+  partitions: 1
+  replicas: 1
